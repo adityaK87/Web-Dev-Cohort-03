@@ -1,94 +1,24 @@
 const express = require("express");
+const jwt = require("jsonwebtoken");
+
+const JWT_SECRET = "thisIsJWT";
 const app = express();
 
-const users = [];
 app.use(express.json());
+const users = [];
 
-const signupHandler = (req, res) => {
+app.get("/", function (req, res) {
+	res.sendFile(__dirname + "/public/index.html");
+});
+
+app.post("/signup", (req, res) => {
 	const username = req.body.username;
 	const password = req.body.password;
-	users.push({ username: username, password: password });
-
-	res.json({
-		message: "You are now signed up.",
+	users.push({ username, password });
+	res.status(200).json({
+		message: "Sign up successfully",
 	});
-};
-
-function generateToken() {
-	let options = [
-		"a",
-		"b",
-		"c",
-		"d",
-		"e",
-		"f",
-		"g",
-		"h",
-		"i",
-		"j",
-		"k",
-		"l",
-		"m",
-		"n",
-		"o",
-		"p",
-		"q",
-		"r",
-		"s",
-		"t",
-		"u",
-		"v",
-		"w",
-		"x",
-		"y",
-		"z",
-		"A",
-		"B",
-		"C",
-		"D",
-		"E",
-		"F",
-		"G",
-		"H",
-		"I",
-		"J",
-		"K",
-		"L",
-		"M",
-		"N",
-		"O",
-		"P",
-		"Q",
-		"R",
-		"S",
-		"T",
-		"U",
-		"V",
-		"W",
-		"X",
-		"Y",
-		"Z",
-		"0",
-		"1",
-		"2",
-		"3",
-		"4",
-		"5",
-		"6",
-		"7",
-		"8",
-		"9",
-	];
-
-	let token = "";
-	for (let i = 0; i < 32; i++) {
-		// use a simple function here
-		token += options[Math.floor(Math.random() * options.length)];
-	}
-	return token;
-}
-
-app.post("/signup", signupHandler);
+});
 
 app.post("/signin", (req, res) => {
 	const username = req.body.username;
@@ -98,34 +28,50 @@ app.post("/signin", (req, res) => {
 		(user) => user.username === username && user.password === password
 	);
 	if (user) {
-		const token = generateToken();
-		user.token = token;
-		res.json({
+		const token = jwt.sign(
+			{
+				username: username,
+			},
+			JWT_SECRET
+		);
+		res.status(200).json({
 			token: token,
 		});
-		console.log(users);
 	} else {
-		res.json({
-			message: "User not found",
+		res.status(404).json({
+			message: "User not Found",
 		});
 	}
 });
 
-app.get("/me", (req, res) => {
+function auth(req, res, next) {
 	const token = req.headers.token;
-	let user = users.find((user) => user.token === token);
+	decodedData = jwt.verify(token, JWT_SECRET);
+	if (decodedData.username) {
+		req.decodedData = decodedData;
+		next();
+	} else {
+		res.json({
+			message: "You are not logged in",
+		});
+	}
+}
+
+app.get("/me", auth, (req, res) => {
+	const user = users.find(
+		(user) => user.username === req.decodedData.username
+	);
 	if (user) {
 		res.status(200).json({
 			username: user.username,
-			password: user.password,
 		});
 	} else {
 		res.status(404).json({
-			message: "token invalid",
+			message: "Token is not valid",
 		});
 	}
 });
 
 app.listen(3000, () => {
-	console.log("listening on port 3000...");
+	console.log("listening on port 3000");
 });
