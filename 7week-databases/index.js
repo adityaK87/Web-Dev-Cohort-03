@@ -1,0 +1,72 @@
+const express = require("express");
+const jwt = require("jsonwebtoken");
+const mongoose = require("mongoose");
+const { JWT_SECRET } = require("./constant");
+
+const app = express();
+app.use(express.json());
+const { UserModel, TodoModel } = require("./db");
+const { auth } = require("./auth");
+
+mongoose
+	.connect(
+		"mongodb+srv://adityapal1409:8UQ4wT192KCrUIuj@cluster0.l39r0.mongodb.net/Todo-app-DB"
+	)
+	.then(() => {
+		console.log("DB connection established");
+	})
+	.catch((err) => {
+		console.log(err.message);
+	});
+
+app.post("/signup", async function (req, res) {
+	const { name, email, password } = req.body;
+
+	const user = await UserModel.findOne({ email });
+
+	if (user) {
+		res.status(403).json({
+			message: "User already exists",
+		});
+		return;
+	}
+
+	await UserModel.create({ name: name, email: email, password: password });
+	res.status(200).json({
+		message: "User created",
+	});
+});
+
+app.post("/signin", async function (req, res) {
+	const { email, password } = req.body;
+	const user = await UserModel.findOne({ email: email, password: password });
+	console.log(user);
+	if (user) {
+		const token = jwt.sign({ id: user._id.toString() }, JWT_SECRET);
+		res.status(200).json({
+			token: token,
+		});
+	} else {
+		res.status(403).json({
+			message: "Incorrect credentials",
+		});
+	}
+});
+
+app.post("/todo", auth, async function (req, res) {
+	const { title, done } = req.body;
+
+	await TodoModel.create({ title: title, done: done, userId: req.userId });
+	res.status(200).json({
+		message: "Todo created successfully",
+	});
+});
+
+app.get("/todos", auth, async function (req, res) {
+	const todos = await TodoModel.find({ userId: req.userId });
+	res.json(todos);
+});
+
+app.listen(3000, () => {
+	console.log("listening on 3000");
+});
