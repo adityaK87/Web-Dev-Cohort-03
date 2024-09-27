@@ -1,7 +1,9 @@
+const bcrypt = require("bcrypt");
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 const { JWT_SECRET } = require("./constant");
+const { z } = require("zod");
 
 const app = express();
 app.use(express.json());
@@ -20,18 +22,31 @@ mongoose
 	});
 
 app.post("/signup", async function (req, res) {
-	const { name, email, password } = req.body;
+	// Input validations using zod
+	const requireBody = z.object({
+		email: z.string().min(10).max(100).email(),
+		password: z.string().min(3).max(100),
+		name: z.string().min(3).max(100),
+	});
 
-	const user = await UserModel.findOne({ email });
+	const parsedData = requireBody.safeParse(req.body);
 
-	if (user) {
-		res.status(403).json({
-			message: "User already exists",
+	if (!parsedData.success) {
+		res.json({
+			message: "Invalid",
+			errors: parsedData.error,
 		});
 		return;
 	}
 
-	await UserModel.create({ name: name, email: email, password: password });
+	const { name, email, password } = parsedData.data;
+	const hashedPassword = await bcrypt.hash(password, 5);
+
+	await UserModel.create({
+		name: name,
+		email: email,
+		password: hashedPassword,
+	});
 	res.status(200).json({
 		message: "User created",
 	});
@@ -39,9 +54,10 @@ app.post("/signup", async function (req, res) {
 
 app.post("/signin", async function (req, res) {
 	const { email, password } = req.body;
-	const user = await UserModel.findOne({ email: email, password: password });
-	console.log(user);
-	if (user) {
+
+	const user = await UserModel.findOne({ email: email });
+	const isCorrectPassword = await bcrypt.compare(password, user.password);
+	if (isCorrectPassword) {
 		const token = jwt.sign({ id: user._id.toString() }, JWT_SECRET);
 		res.status(200).json({
 			token: token,
