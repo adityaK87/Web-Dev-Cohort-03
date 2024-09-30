@@ -4,15 +4,9 @@ const { UserModel } = require("../db");
 const { z } = require("zod");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const { requiredBody } = require("../helper");
 
 const userRouter = Router();
-
-const requiredBody = z.object({
-	email: z.string().email().min(10).max(100),
-	password: z.string().min(10).max(100),
-	firstName: z.string().min(3).max(100),
-	lastName: z.string().min(3).max(100),
-});
 
 userRouter.post("/signup", async (req, res) => {
 	try {
