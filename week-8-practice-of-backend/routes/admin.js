@@ -1,10 +1,12 @@
 require("dotenv").config();
 const { Router } = require("express");
 const adminRouter = Router();
-const { AdminModel } = require("../db");
+const { AdminModel, CourseModel } = require("../db");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const { requiredBody } = require("../helper");
+const { requiredBody, validateCourse } = require("../helper");
+const { adminMiddleware } = require("../middlewares/admin");
+const course = require("./course");
 
 adminRouter.post("/signup", async (req, res) => {
 	try {
@@ -57,7 +59,7 @@ adminRouter.post("/signin", async (req, res) => {
 			return;
 		}
 		// console.log(foundUser._id.toString());
-		console.log("jwt scret", process.env.JWT_SECRET_PASS);
+
 		const token = jwt.sign(
 			{ userId: foundUser._id.toString() },
 			process.env.JWT_ADMIN_SECRET
@@ -72,21 +74,60 @@ adminRouter.post("/signin", async (req, res) => {
 	}
 });
 
-adminRouter.post("/course", (req, res) => {
-	res.json({
-		message: "create course endpoint",
-	});
+adminRouter.post("/course", adminMiddleware, async (req, res) => {
+	try {
+		const parsedCourse = validateCourse.safeParse(req.body);
+		userId = req.userId;
+		console.log(parsedCourse.data);
+		console.log(req.userId);
+		const { title, description, price, imageUrl } = parsedCourse.data;
+
+		await CourseModel.create({
+			title: title,
+			description: description,
+			price: price,
+			imageUrl: imageUrl,
+			createrId: userId,
+		});
+
+		res.json({
+			message: "Course created successfully",
+		});
+	} catch (error) {
+		res.json({
+			message: "put right credentials",
+		});
+	}
 });
 
-adminRouter.put("/couse/:courseId", (req, res) => {
-	res.json({
-		message: "change course",
-	});
+adminRouter.put("/course/:courseId", adminMiddleware, async (req, res) => {
+	try {
+		const courseId = req.params.courseId;
+		const parsedCourse = validateCourse.safeParse(req.body);
+		const { title, description, price, imageUrl } = parsedCourse.data;
+		await CourseModel.findByIdAndUpdate(courseId, {
+			title,
+			description,
+			price,
+			imageUrl,
+		});
+
+		res.json({
+			message: "Course update successfully",
+		});
+	} catch (error) {
+		res.json({
+			message: "Course update failed",
+			error: error.message,
+		});
+	}
 });
 
-adminRouter.get("/bulk", (req, res) => {
-	res.json({
-		message: "all the bulk courses",
+adminRouter.get("/bulk", adminMiddleware, async (req, res) => {
+	const courses = await CourseModel.find();
+	console.log(courses);
+	res.send({
+		courses: courses,
 	});
 });
 
