@@ -1,12 +1,16 @@
 import { RecoilRoot, useRecoilValue, useSetRecoilState } from "recoil";
 import "./App.css";
 import { counterAtom, counterSelector } from "./store/atoms/counter";
+import Stopwatch from "./components/StopWatch";
 
 function App() {
 	return (
-		<RecoilRoot>
-			<CounterApp />
-		</RecoilRoot>
+		<>
+			<Stopwatch />
+			<RecoilRoot>
+				<CounterApp />
+			</RecoilRoot>
+		</>
 	);
 }
 
