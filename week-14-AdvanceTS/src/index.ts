@@ -48,3 +48,15 @@ type Users = Record<string, { name: string; age: number }>;
 const users: Users = {
 	"a2@": { age: 12, name: "Aditya Kumar" },
 };
+
+interface Employee {
+	id: number;
+	name: string;
+}
+
+const employee = new Map<string, Employee>();
+
+employee.set("emp@1", { id: 12, name: "aditya" });
+employee.set("emp@2", { id: 2, name: "abhinav" });
+
+employee.get("emp@1"); //{ id: 12, name: "aditya" }
