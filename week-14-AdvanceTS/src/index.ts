@@ -10,7 +10,10 @@ interface User {
 
 type UpdateProps = Pick<User, "name" | "age" | "password">;
 
-function updateUser(updateProps: UpdateProps): UpdateProps {
+// it won't complain if I pass only 2 props
+type optionalAllProps = Partial<UpdateProps>;
+
+function updateUser(updateProps: optionalAllProps): UpdateProps {
 	let updateUser = {
 		...updateProps,
 		name: "Abhi",
@@ -21,5 +24,27 @@ function updateUser(updateProps: UpdateProps): UpdateProps {
 	//Write DB call Here
 }
 
-let ans = updateUser({ name: "Aditya", password: "sdsg", age: 11 });
-console.log(ans);
+let ans = updateUser({ password: "sdsg", age: 11 });
+// console.log(ans);
+
+//Readonly
+
+interface Config {
+	apiUrl: string;
+	apiKey: string;
+}
+
+const config: Readonly<Config> = {
+	apiUrl: "http://api.aditya.com",
+	apiKey: "dsjfkhdkjghdfkjgh",
+};
+
+// Cannot assign to 'apiKey' because it is a read-only property.
+// config.apiKey = "efehfer";
+// config.apiKey = "efehfer";
+
+// Records and Map
+type Users = Record<string, { name: string; age: number }>;
+const users: Users = {
+	"a2@": { age: 12, name: "Aditya Kumar" },
+};
