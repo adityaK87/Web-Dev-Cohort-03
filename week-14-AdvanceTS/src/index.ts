@@ -60,3 +60,14 @@ employee.set("emp@1", { id: 12, name: "aditya" });
 employee.set("emp@2", { id: 2, name: "abhinav" });
 
 employee.get("emp@1"); //{ id: 12, name: "aditya" }
+
+//Exclude
+
+type Events = "click" | "scroll" | "mousemove";
+type ExcludeEvent = Exclude<Events, "scroll">; //"click", mousemove
+
+const handleEvent = (event: ExcludeEvent) => {
+	console.log("Handling Event", event);
+};
+
+handleEvent("mousemove");
