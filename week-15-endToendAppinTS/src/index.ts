@@ -1,10 +1,11 @@
-import express, { Response, Request } from "express";
+import express from "express";
 import jwt from "jsonwebtoken";
 import { dbConnection } from "./dbConnection";
 import { z } from "zod";
 import { UserModel } from "./db";
 import bcrypt from "bcrypt";
 import { JWT_SECRET } from "./config";
+import { userAuth } from "./middleware";
 
 const app = express();
 app.use(express.json());
@@ -46,50 +47,48 @@ app.post("/api/v1/signup", async (req, res) => {
 	}
 });
 
-app.post(
-	"/api/v1/signin",
-	async (req: Request, res: Response): Promise<void> => {
-		const { username, password } = req.body;
+app.post("/api/v1/signin", async (req, res) => {
+	const { username, password } = req.body;
 
-		try {
-			// Check if user exists
-			const user = await UserModel.findOne({ username });
+	try {
+		// Check if user exists
+		const user = await UserModel.findOne({ username });
 
-			if (!user) {
-				res.status(404).json({ message: "User not found" });
-				return;
-			}
-
-			if (!user.password) {
-				res.status(400).json({ message: "Invalid user data" });
-				return;
-			}
-
-			// Validate password
-			const isPasswordValid = await bcrypt.compare(
-				password,
-				user.password
-			);
-			if (!isPasswordValid) {
-				res.status(403).json({ message: "Invalid credentials" });
-				return;
-			}
-
-			// Generate JWT token
-			const token = jwt.sign({ id: user.id }, JWT_SECRET, {
-				expiresIn: "1h",
-			});
-
-			// Return token
-			res.status(200).json({ token });
-		} catch (error) {
-			console.error("Error in /signin route:", error);
-			res.status(500).json({ message: "Internal server error" });
+		if (!user) {
+			res.status(404).json({ message: "User not found" });
+			return;
 		}
-	}
-);
 
-app.post("/api/v1/content", (req, res) => {});
+		if (!user.password) {
+			res.status(400).json({ message: "Invalid user data" });
+			return;
+		}
+
+		// Validate password
+		const isPasswordValid = await bcrypt.compare(password, user.password);
+		if (!isPasswordValid) {
+			res.status(403).json({ message: "Invalid credentials" });
+			return;
+		}
+
+		// Generate JWT token
+		const token = jwt.sign({ id: user.id }, JWT_SECRET, {
+			expiresIn: "1h",
+		});
+
+		// Return token
+		res.status(200).json({ token });
+	} catch (error) {
+		console.error("Error in /signin route:", error);
+		res.status(500).json({ message: "Internal server error" });
+	}
+});
+
+app.post("/api/v1/content", userAuth, (req, res) => {
+	try {
+		const {} = req.body;
+	} catch (error) {}
+});
 
 app.get("/api/v1/content", (req, res) => {});
 
