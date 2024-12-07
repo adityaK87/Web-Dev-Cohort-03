@@ -8,7 +8,7 @@ export const userAuth = (req: Request, res: Response, next: NextFunction) => {
 		const decode = jwt.verify(token as string, JWT_SECRET);
 		if (decode) {
 			// @ts-ignore
-			req.userID = decode.id;
+			req.userId = decode.id;
 			next();
 		} else {
 			res.status(403).json({

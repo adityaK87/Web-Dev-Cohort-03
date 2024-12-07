@@ -2,7 +2,7 @@ import express from "express";
 import jwt from "jsonwebtoken";
 import { dbConnection } from "./dbConnection";
 import { z } from "zod";
-import { UserModel } from "./db";
+import { ContentModel, UserModel } from "./db";
 import bcrypt from "bcrypt";
 import { JWT_SECRET } from "./config";
 import { userAuth } from "./middleware";
@@ -84,15 +84,55 @@ app.post("/api/v1/signin", async (req, res) => {
 	}
 });
 
-app.post("/api/v1/content", userAuth, (req, res) => {
+app.post("/api/v1/content", userAuth, async (req, res) => {
 	try {
-		const {} = req.body;
-	} catch (error) {}
+		const { title, link } = req.body;
+		await ContentModel.create({
+			title,
+			link,
+			// @ts-ignore
+			userId: req.userId,
+			tags: [],
+		});
+		res.status(200).json({
+			message: "Content Created successfully",
+		});
+	} catch (error) {
+		res.status(411).json({
+			message: "Please login",
+		});
+	}
 });
 
-app.get("/api/v1/content", (req, res) => {});
+app.get("/api/v1/content", userAuth, async (req, res) => {
+	try {
+		const contents = await ContentModel.find({
+			// @ts-ignore
+			userId: req.userId,
+		}).populate("userId", "username");
+		res.status(200).json({
+			content: contents,
+		});
+	} catch (error) {
+		res.status(411).json({
+			message: "User is not Logged in",
+		});
+	}
+});
 
-app.delete("/api/v1/content", (req, res) => {});
+app.delete("/api/v1/content", userAuth, async (req, res) => {
+	try {
+		const contentId = req.body.contentId;
+		await ContentModel.deleteOne({
+			_id: contentId,
+			// @ts-ignore
+			userId: req.userId,
+		});
+		res.status(200).json({
+			message: "",
+		});
+	} catch (error) {}
+});
 
 app.post("/api/v1/brain/share", (req, res) => {});
 
