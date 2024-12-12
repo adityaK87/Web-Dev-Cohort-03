@@ -90,7 +90,6 @@ app.post("/api/v1/content", userAuth, async (req, res) => {
 		await ContentModel.create({
 			title,
 			link,
-			// @ts-ignore
 			userId: req.userId,
 			tags: [],
 		});
@@ -107,7 +106,6 @@ app.post("/api/v1/content", userAuth, async (req, res) => {
 app.get("/api/v1/content", userAuth, async (req, res) => {
 	try {
 		const contents = await ContentModel.find({
-			// @ts-ignore
 			userId: req.userId,
 		}).populate("userId", "username");
 		res.status(200).json({
@@ -125,7 +123,6 @@ app.delete("/api/v1/content", userAuth, async (req, res) => {
 		const contentId = req.body.contentId;
 		await ContentModel.deleteOne({
 			_id: contentId,
-			// @ts-ignore
 			userId: req.userId,
 		});
 		res.status(200).json({
