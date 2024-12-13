@@ -2,10 +2,11 @@ import express from "express";
 import jwt from "jsonwebtoken";
 import { dbConnection } from "./dbConnection";
 import { z } from "zod";
-import { ContentModel, UserModel } from "./db";
+import { ContentModel, UserModel, LinkModel } from "./db";
 import bcrypt from "bcrypt";
 import { JWT_SECRET } from "./config";
 import { userAuth } from "./middleware";
+import { randomString } from "./utils";
 
 const app = express();
 app.use(express.json());
@@ -29,13 +30,12 @@ app.post("/api/v1/signup", async (req, res) => {
 			return;
 		}
 		//Hashing the data
-
 		const hashedPassword = await bcrypt.hash(parsedData.data.password, 5);
-
 		await UserModel.create({
 			username: parsedData.data.username,
 			password: hashedPassword,
 		});
+
 		res.status(200).json({
 			message: "Signed up Successfully",
 		});
@@ -131,9 +131,68 @@ app.delete("/api/v1/content", userAuth, async (req, res) => {
 	} catch (error) {}
 });
 
-app.post("/api/v1/brain/share", (req, res) => {});
+app.post("/api/v1/brain/share", userAuth, async (req, res) => {
+	const share = req.body.share;
+	if (share) {
+		const existingLink = await LinkModel.findOne({
+			userId: req.userId,
+		});
+		if (existingLink) {
+			res.json({
+				hash: existingLink.hash,
+			});
+			return;
+		}
+		const hash = randomString(10);
+		await LinkModel.create({
+			hash,
+			userId: req.userId,
+		});
+		res.status(200).json({
+			hash: hash,
+		});
+		return;
+	} else {
+		await LinkModel.deleteOne({
+			userId: req.userId,
+		});
+	}
+});
 
-app.get("/api/v1/brain/:shareLink", (req, res) => {});
+app.get("/api/v1/brain/:shareLink", async (req, res) => {
+	const hash = req.params.shareLink;
+	console.log(hash);
+
+	const link = await LinkModel.findOne({
+		hash: hash,
+	});
+	console.log(link);
+	if (!link) {
+		res.status(411).json({
+			message: "Sorry Incorrect Input",
+		});
+		return;
+	}
+
+	const content = await ContentModel.find({
+		userId: link.userId,
+	});
+
+	const user = await UserModel.findOne({
+		_id: link.userId,
+	});
+
+	if (!user) {
+		res.status(411).json({
+			message: "User not Found, Error should ideally nt happen",
+		});
+		return;
+	}
+	res.json({
+		username: user.username,
+		content: content,
+	});
+});
 
 dbConnection().then(() => {
 	app.listen(8080, () => {
