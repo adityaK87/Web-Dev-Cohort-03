@@ -1,14 +1,30 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Button } from "../components/Button";
 import Input from "../components/Input";
+import axios from "axios";
+import { BACKEND_URL } from "../config";
 
 const Auth = () => {
 	const [isSignInform, setIsSignInform] = useState(true);
+	const usernameRef = useRef<HTMLInputElement>();
+	const passwordRef = useRef<HTMLInputElement>();
+
+	async function signup() {
+		const username = usernameRef.current?.value;
+		const password = passwordRef.current?.value;
+
+		await axios.post(BACKEND_URL + "/api/v1/signup", {
+			username,
+			password,
+		});
+		alert("Signed up successfully");
+	}
+
 	return (
 		<div className="w-screen h-screen bg-gray-100 flex items-center justify-center">
 			<div className="bg-white rounded p-4 min-w-52 flex flex-col justify-center">
-				<Input placeholder="username" />
-				<Input placeholder="password" />
+				<Input reference={usernameRef} placeholder="username" />
+				<Input reference={passwordRef} placeholder="password" />
 				<p>
 					{isSignInform ? (
 						<Button
@@ -23,6 +39,7 @@ const Auth = () => {
 							size="md"
 							text="SIGN UP"
 							variant="primary"
+							onClick={signup}
 							fullWidth={true}
 							loading={false}
 						/>
