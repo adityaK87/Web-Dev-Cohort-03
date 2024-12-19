@@ -7,9 +7,11 @@ import bcrypt from "bcrypt";
 import { JWT_SECRET } from "./config";
 import { userAuth } from "./middleware";
 import { randomString } from "./utils";
+import cors from "cors";
 
 const app = express();
 app.use(express.json());
+app.use(cors());
 
 const SignupData = z
 	.object({
