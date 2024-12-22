@@ -5,9 +5,11 @@ import CreateContentModel from "../components/CreateContentModel";
 import { PlusIcon } from "../icons/PlusIcon";
 import { ShareIcon } from "../icons/ShareIcons";
 import Sidebar from "../components/Sidebar";
+import { useContent } from "../hooks/useContent";
 
 function Dashboard() {
 	const [isOpen, setIsOpen] = useState(false);
+	const contents = useContent();
 	return (
 		<div>
 			<div className="">
@@ -19,7 +21,7 @@ function Dashboard() {
 					setClose={() => setIsOpen(false)}
 				/>
 
-				<div className="flex justify-end gap-2 py-2">
+				<div className="flex justify-end gap-2 py-2 px-3">
 					<Button
 						onClick={() => {
 							setIsOpen(true);
@@ -41,30 +43,10 @@ function Dashboard() {
 				</div>
 
 				<div className="flex flex-wrap gap-4 justify-center">
-					<Card
-						link={"https://www.youtube.com/watch?v=Zf__nAYMuqw"}
-						title="Youtube"
-						type="youtube"
-					/>
-					<Card
-						link={
-							"https://x.com/thedanigrant/status/1866161308938490166"
-						}
-						title="Twitter"
-						type="twitter"
-					/>
-					<Card
-						link={"https://www.youtube.com/watch?v=Zf__nAYMuqw"}
-						title="Youtube"
-						type="youtube"
-					/>
-					<Card
-						link={
-							"https://x.com/thedanigrant/status/1866161308938490166"
-						}
-						title="Twitter"
-						type="twitter"
-					/>
+					{contents.toLocaleString()}
+					{contents.map(({ title, link, type }) => (
+						<Card link={link} title={title} type={type} />
+					))}
 				</div>
 			</div>
 		</div>

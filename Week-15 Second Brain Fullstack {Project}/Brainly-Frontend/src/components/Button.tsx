@@ -8,7 +8,7 @@ export interface ButtonProps {
 	endIcon?: ReactElement;
 	onClick?: () => void;
 	fullWidth?: boolean;
-	loading: boolean;
+	loading?: boolean;
 }
 
 const variantStyle = {

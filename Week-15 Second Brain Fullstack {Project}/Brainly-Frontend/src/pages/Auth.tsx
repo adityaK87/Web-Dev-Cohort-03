@@ -3,11 +3,13 @@ import { Button } from "../components/Button";
 import Input from "../components/Input";
 import axios from "axios";
 import { BACKEND_URL } from "../config";
+import { useNavigate } from "react-router-dom";
 
 const Auth = () => {
 	const [isSignInform, setIsSignInform] = useState(true);
 	const usernameRef = useRef<HTMLInputElement>();
 	const passwordRef = useRef<HTMLInputElement>();
+	const navigate = useNavigate();
 
 	async function signup() {
 		const username = usernameRef.current?.value;
@@ -17,7 +19,32 @@ const Auth = () => {
 			username,
 			password,
 		});
-		alert("Signed up successfully");
+
+		const response = await axios.post(BACKEND_URL + "/api/v1/signin", {
+			username,
+			password,
+		});
+
+		const jwt = response.data.token;
+		if (jwt) {
+			localStorage.setItem("token", jwt);
+			navigate("/dashboard");
+		}
+	}
+
+	async function signin() {
+		const username = usernameRef.current?.value;
+		const password = passwordRef.current?.value;
+
+		const response = await axios.post(BACKEND_URL + "/api/v1/signin", {
+			username,
+			password,
+		});
+		const jwt = response.data.token;
+		if (jwt) {
+			localStorage.setItem("token", jwt);
+			navigate("/dashboard");
+		}
 	}
 
 	return (
@@ -31,6 +58,7 @@ const Auth = () => {
 							size="md"
 							text="SIGN IN"
 							variant="primary"
+							onClick={signin}
 							fullWidth={true}
 							loading={false}
 						/>
