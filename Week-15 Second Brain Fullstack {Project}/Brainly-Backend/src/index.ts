@@ -75,7 +75,7 @@ app.post("/api/v1/signin", async (req, res) => {
 
 		// Generate JWT token
 		const token = jwt.sign({ id: user.id }, JWT_SECRET, {
-			expiresIn: "1h",
+			expiresIn: "30d",
 		});
 
 		// Return token
@@ -88,10 +88,11 @@ app.post("/api/v1/signin", async (req, res) => {
 
 app.post("/api/v1/content", userAuth, async (req, res) => {
 	try {
-		const { title, link } = req.body;
+		const { title, link, type } = req.body;
 		await ContentModel.create({
 			title,
 			link,
+			type,
 			userId: req.userId,
 			tags: [],
 		});

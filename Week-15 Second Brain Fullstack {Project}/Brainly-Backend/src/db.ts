@@ -21,6 +21,7 @@ const contentSchema = new Schema({
 		minLength: 4,
 		maxLentgth: 500,
 	},
+	type: String,
 	link: String,
 	tags: [{ type: Schema.Types.ObjectId, ref: "Tag" }],
 	userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
