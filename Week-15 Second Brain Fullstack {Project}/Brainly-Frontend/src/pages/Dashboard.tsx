@@ -6,6 +6,8 @@ import { PlusIcon } from "../icons/PlusIcon";
 import { ShareIcon } from "../icons/ShareIcons";
 import Sidebar from "../components/Sidebar";
 import { useContent } from "../hooks/useContent";
+import axios from "axios";
+import { BACKEND_URL } from "../config";
 
 function Dashboard() {
 	const [isOpen, setIsOpen] = useState(false);
@@ -32,8 +34,22 @@ function Dashboard() {
 						startIcon={<PlusIcon size="md" />}
 					/>
 					<Button
-						onClick={() => {
-							console.log("large Primary Button");
+						onClick={async () => {
+							const response = await axios.post(
+								`${BACKEND_URL}/api/v1/brain/share`,
+								{
+									share: true,
+								},
+								{
+									headers: {
+										Authorization:
+											localStorage.getItem("token"),
+									},
+								}
+							);
+							const shareLink = `${window.location.origin}/${response.data.hash}`;
+							window.navigator.clipboard.writeText(shareLink);
+							alert(shareLink);
 						}}
 						size="md"
 						variant="secondary"
@@ -43,9 +59,8 @@ function Dashboard() {
 				</div>
 
 				<div className="flex flex-wrap gap-4 justify-center">
-					{contents.toLocaleString()}
-					{contents.map(({ title, link, type }) => (
-						<Card link={link} title={title} type={type} />
+					{contents.map(({ title, link, type, _id }) => (
+						<Card key={_id} link={link} title={title} type={type} />
 					))}
 				</div>
 			</div>
