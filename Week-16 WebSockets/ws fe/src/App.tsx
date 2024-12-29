@@ -21,6 +21,7 @@ function App() {
 			alert(ev.data);
 		};
 	}, []);
+
 	return (
 		<div>
 			<input type="text" placeholder="Message" ref={inputRef} />
