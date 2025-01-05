@@ -49,3 +49,7 @@
 #### Week-16 WebSockets
 
 <a href="https://petal-estimate-4e9.notion.site/WebSockets-1477dfd10735802982becc925074b5f0">Slides for WebSockests</a>
+
+#### Week-17 Postgres and SQL
+
+<a href="https://projects.100xdevs.com/tracks/YOSAherHkqWXhOdlE4yE/sql-1">Slides</a>
