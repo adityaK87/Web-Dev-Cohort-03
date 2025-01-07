@@ -5,11 +5,16 @@ const app = express();
 
 app.use(express.json());
 
+// get the users and their addresses
+//JOINS IN SQL
 app.get("/users", async (req, res) => {
-	const users = await pgClient.query("SELECT * FROM users;");
+	const id = req.query.userid;
+	const joinQuery =
+		"SELECT users.username, users.email, addresses.city, addresses.country FROM users JOIN addresses ON users.id = addresses.user_id WHERE users.id= $1";
+	const users = await pgClient.query(joinQuery, [id]);
 
 	res.json({
-		users: users,
+		users: users.rows,
 	});
 });
 
