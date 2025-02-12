@@ -1,5 +1,5 @@
 {
-  "name": "my-turborepo",
+  "name": "class-21.1-turborepo",
   "private": true,
   "scripts": {
     "build": "turbo build",
