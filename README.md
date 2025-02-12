@@ -129,3 +129,20 @@
 ### Week 21
 
 -   **21.1 - Mono Repos and Turborepo** - https://petal-estimate-4e9.notion.site/Monorepos-b40e9c44a2ee4fe3badc3883841fc2c0
+-   **21.2 - Monorepos Continued** - https://petal-estimate-4e9.notion.site/Monorepos-b40e9c44a2ee4fe3badc3883841fc2c0
+
+### Week 21 - Offline Videos
+
+-   **21.3 - CSR vs SSR vs Static Site Generation** - https://projects.100xdevs.com/tracks/rendering/render-1
+-   **21.4 - Building PayTM Project** - https://projects.100xdevs.com/tracks/oAjvkeRNZThPMxZf4aX5/JLaLbhDuYn3h5Cn7WJu1
+-   **21.5 - PayTM Frontend** - https://projects.100xdevs.com/tracks/rendering/render-1
+
+### Week 22
+
+-   **22.1 - End to End - Project #1 - Excalidraw** - https://github.com/100xdevs-cohort-3/week-22-excelidraw
+-   **22.2 - End to End - Project #1 - Part 2** - https://github.com/100xdevs-cohort-3/week-22-excelidraw
+
+### Week 23
+
+-   **23.1 - Excalidraw Part 3** - https://github.com/100xdevs-cohort-3/week-22-excelidraw
+-   **23.2 - Excalidraw Part 4** - https://github.com/100xdevs-cohort-3/week-22-excelidraw
