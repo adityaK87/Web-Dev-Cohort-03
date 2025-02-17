@@ -1,6 +1,6 @@
-import jwt from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
-import { JWT_SECRET } from "./config";
+import { JWT_SECRET } from "@repo/backend-common/config";
 
 declare global {
 	namespace Express {
@@ -14,9 +14,9 @@ export const middleware = (req: Request, res: Response, next: NextFunction) => {
 	const token = req.headers["authorization"] ?? "";
 
 	const decoded = jwt.verify(token, JWT_SECRET);
+
 	if (decoded) {
-		//@ts-ignore
-		req.userId = decoded.userId;
+		req.userId = (decoded as JwtPayload).userId;
 	} else {
 		res.json({
 			message: "Something went Wrong",
