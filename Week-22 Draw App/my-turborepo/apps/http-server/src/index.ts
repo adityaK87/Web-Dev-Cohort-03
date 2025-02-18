@@ -8,6 +8,7 @@ import {
 } from "@repo/common/types";
 
 import { JWT_SECRET } from "@repo/backend-common/config";
+import { prismaClient } from "@repo/db/prisma";
 
 const app = express();
 app.use(express.json());
