@@ -146,3 +146,6 @@
 
 -   **23.1 - Excalidraw Part 3** - https://github.com/100xdevs-cohort-3/week-22-excelidraw
 -   **23.2 - Excalidraw Part 4** - https://github.com/100xdevs-cohort-3/week-22-excelidraw
+
+### Week 24 
+-  **24 - VMs and Deploying a MERN app** - https://petal-estimate-4e9.notion.site/VMs-and-Deploying-a-MERN-app-1867dfd10735809b8c3ad17e07e23ff2
