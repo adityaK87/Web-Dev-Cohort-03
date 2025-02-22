@@ -1,4 +1,4 @@
-import { HTTP_BACKEND } from "@/app/config";
+import { HTTP_BACKEND } from "@/config";
 import axios from "axios";
 
 type Shape =
