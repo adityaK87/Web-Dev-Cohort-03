@@ -1,0 +1,20 @@
+{
+  "name": "http-backend",
+  "module": "index.ts",
+  "type": "module",
+  "scripts": {
+    "build": "tsc -b",
+    "start": "node ./dist/index.ts"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@repo/db": "*"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@types/express": "^5.0.0",
+    "express": "^4.21.2"
+  }
+}

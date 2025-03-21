@@ -1,0 +1,28 @@
+{
+  "name": "my-turborepo",
+  "private": true,
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "check-types": "turbo run check-types",
+    "generate:db": "cd packages/db && bunx prisma generate && cd ../../",
+    "start:ws": "cd apps/ws && bun run index.ts",
+    "start:backend": "cd apps/http-backend && bun run index.ts",
+    "start:web": "cd apps/web && bun run build && bun run start"
+  },
+  "devDependencies": {
+    "prettier": "^3.5.3",
+    "turbo": "^2.4.4",
+    "typescript": "5.8.2"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "packageManager": "bun@1.2.5",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
+}
