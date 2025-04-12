@@ -1,0 +1,16 @@
+{
+  "name": "week-30-aws-ecr-&-ecs",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@types/express": "^5.0.1",
+    "express": "^4.21.2"
+  }
+}
